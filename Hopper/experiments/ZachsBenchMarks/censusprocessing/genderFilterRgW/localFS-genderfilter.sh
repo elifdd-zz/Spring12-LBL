@@ -18,7 +18,8 @@ export TESTNAME="LocalFS gender filter on census data"
 export DBPATH="test"
 export numNodes="10"
 export mapsPerNode="18"
-export totalmaps="180"  ##do the multiplication
+export totalmaps="180"  
+
 
 echo "=== db_path : "$DBPATH
 echo "=== number of nodes: "$numNodes
