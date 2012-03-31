@@ -17,7 +17,8 @@ export TESTNAME="MongoDB labellingWgR on census data"
 export DBPATH="test"
 export numNodes="5"
 export mapsPerNode="18"
-export totalmaps="90"  ##do the multiplication
+export totalmaps="90"  
+
 
 echo "=== db_path : "$DBPATH
 echo "=== number of nodes: "$numNodes
@@ -48,21 +49,19 @@ module load hadoop
 #cd ..
 #sleep 2
 
-#echo "--------------------------------------------"
-#echo "Checking input data of mongo"
-#/global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/./mongo --host $MONGODB_HOST $DBPATH /global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/datacheck.js
-
 echo "--------------------------------------------"
+echo "Checking input data of mongo"
+#/global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/./mongo --host $MONGODB_HOST $DBPATH /global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/datacheck.js
+echo "--------------------------------------------"
+
 echo "Clean up old output data of mongo"
 /global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/./mongo --host $MONGODB_HOST $DBPATH /global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/cleanoutput.js
 sleep 2
 
-echo "--------------------------------------------"
 echo "Cleanup Previous Hadoop..."
 cleanup_hadoop
 sleep 3
 
-echo "--------------------------------------------"
 echo "Starting Hadoop..."
 rm exportpath
 start_hadoop > exportpath
@@ -86,10 +85,11 @@ echo "Running Hadoop"
 #>output.$PBS_JOBID
 hadoop jar genderFilterRgW.jar genderFilterRgW $MONGODB_HOST $DBPATH
 sleep 10
-
 echo "--------------------------------------------"
+
 echo "Checking output data of mongo"
 /global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/./mongo --host $MONGODB_HOST $DBPATH /global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1/bin/datacheck.js
+echo "--------------------------------------------"
 
 echo "--------------------------------------------"
 echo "Cleaning Hadoop..."
