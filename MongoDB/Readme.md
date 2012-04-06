@@ -28,3 +28,6 @@ and 'port' is the mongodb port (e.g. 27017)
 
 After that, you should be able to use 'conn' just like a connection
 in the pymongo package
+
+For a more complete example, look at my
+[mongodb stress test](https://github.com/mpkocher/MongoDB-Stress-Test/blob/master/w.py).
