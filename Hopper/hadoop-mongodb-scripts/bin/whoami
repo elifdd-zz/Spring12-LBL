@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -e /proc/cray_xt/nid ] ; then
+ echo $USER
+else
+  /usr/bin/whoami
+fi
+
+

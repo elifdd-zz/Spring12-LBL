@@ -4,12 +4,11 @@
 
 cd $PBS_O_WORKDIR
 #
-export HADOOP_HOME_ELIF="/global/homes/e/edede/Spring12-LBL/Hopper/hadoop-mongodb-scripts"
 # Run parameters
 export CONFIG="$HOME/.hadoop-$PBS_JOBID"
-export TMPL=$HADOOP_HOME_ELIF/conf/$NERSC_HOST
-#export LDIR=/tmp/hdfs-$USER
-export LDIR=/scratch/scratchdirs/edede/tmps/hdfs-$USER
+export TMPL=$HADOOP_HOME/conf/$NERSC_HOST
+export LDIR=/tmp/hdfs-$USER
+
 function cleanup {
   echo "Called cleanup"
   . $CONFIG/cleanup
@@ -87,24 +86,7 @@ create_env
 # Start map reduce tasks
 #
 $GET_ID|sort -n|awk 'BEGIN{i=1}{print i":"$1":";i++}'|grep -v ":$HOSTNAME:" > $NODELIST
-##
-
-#while read LINE
-#do
-    #echo $LINE
-#    mkdir $CONFIG/config-$LINE
-#    for file in "mapred" "core" "hdfs"; do
-#	cat $TMPL/$file-site${EXT}.xml.tmpl |sed "s/%IP%/$IP/"|sed "s/%USER%/$USER/" > $CONFIG/config-$LINE/$file-site.xml
-#    done
-#    cp $CONFIG/env $CONFIG/config-$LINE/
-#    cp $CONFIG/nodelist $CONFIG/config-$LINE/
-#done <$NODELIST
-
-##
-$RUN_DEEP $HADOOP_HOME_ELIF/bin/run_tracker &
+$RUN_DEEP $HADOOP_HOME/bin/run_tracker &
 echo $! >> $CONFIG/pids
-
-
-
 
 #rm $NODELIST

@@ -1,10 +1,8 @@
 #!/bin/sh
 
-export CONFIG="$HOME/.hadoop-$PBS_JOBID"
-#"$PBS_O_WORKDIR/.hadoop-$PBS_JOBID"
+export CONFIG="$PBS_O_WORKDIR/.hadoop-$PBS_JOBID"
 export TMPL=$HADOOP_HOME/conf/$NERSC_HOST
-export LOGS="$SCRATCH/logs"
-#${NERSC_HOST}-${PBS_JOBID}"
+export LOGS="$SCRATCH/logs/${NERSC_HOST}-${PBS_JOBID}"
 
 if [ -e $CONFIG/pids ] ; then
   for p in $(sort -r -n $CONFIG/pids) ; do
@@ -18,8 +16,4 @@ rm -rf /tmp/hdfs-$USER/
 
 rm -rf $CONFIG
 
-rm -rf $LOGS/*
-
-#rm -rf $HOME/.hadoop-*
-
-rm -rf /scratch/scratchdirs/edede/tmps/*
+rm -rf $LOGS

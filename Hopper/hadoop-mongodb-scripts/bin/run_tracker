@@ -1,0 +1,56 @@
+#!/bin/ksh
+
+export CONFIG="$HOME/.hadoop-$PBS_JOBID"
+
+if [ -e "$CONFIG/env" ] ; then
+  . $CONFIG/env
+fi
+
+eval "$IDCOMMAND"
+##
+export EHID=$(grep ":$ID:" $NODELIST|awk -F: '{print $1}')
+##
+[ -e $LDIR-$EHID ] && rm -rf /scratch/scratchdirs/edede/tmps/hdfs-$USER-$EHID #/tmp/hdfs-$USER
+if [ -e $HADOOP_LINK ] ; then
+  [ -e $HADOOP_LINK/$ID ] && rm -rf $HADOOP_LINK/$ID
+  mkdir $HADOOP_LINK/$ID
+  ln -s $HADOOP_LINK/$ID $LDIR
+else
+  mkdir $LDIR-$EHID
+fi
+mkdir $LDIR-$EHID/local
+ln -s /dev/urandom /tmp/random
+
+function cleanup {
+  killall java > /dev/null 2>&1
+  cd /tmp
+  [ -e $LDIR-$EHID ] && rm -rf $LDIR
+  [ -e /tmp/random ] && rm /tmp/random
+  exit
+}
+trap cleanup 2 15
+
+if [ $(grep -c $ID $NODELIST) -gt 0 ] ;then
+  export HID=$(grep ":$ID:" $NODELIST|awk -F: '{print $1}')
+####
+  mkdir $CONFIG/config-$HID
+    for file in "mapred" "core" "hdfs"; do
+	cat $TMPL/$file-site${EXT}.xml.tmpl |sed "s/%IP%/$IP/"|sed "s/%USER%/$USER-$HID/" > $CONFIG/config-$HID/$file-site.xml
+    done
+    cp $CONFIG/env $CONFIG/config-$HID/
+    cp $CONFIG/nodelist $CONFIG/config-$HID/
+####
+  if [ $HID -le $DATANODES ] ;then
+#  echo "Start!"
+    mkdir $LDIR-$EHID/data
+    #    bash --norc $HADOOP_HOME/bin/hadoop --config $CONFIG datanode  > $LOGS/data.$HID 2>&1 &
+    bash --norc $HADOOP_HOME/bin/hadoop --config $CONFIG/config-$HID datanode  > $LOGS/data.$HID 2>&1 & 
+    sleep 5
+  fi
+
+  echo "Starting Tracker on $ID"
+  #      bash --norc $HADOOP_HOME/bin/hadoop --config $CONFIG tasktracker  > $LOGS/task.$ID 2>&1
+  bash --norc $HADOOP_HOME/bin/hadoop --config $CONFIG/config-$HID tasktracker  > $LOGS/task.$ID 2>&1                                                                               
+  echo "Done"
+  cleanup
+fi
