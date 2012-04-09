@@ -1,0 +1,26 @@
+export THREADS=24
+HNAME=$(hostname)
+export SNAME=$(grep " $HNAME " /etc/hosts|sed s'/ #.*//'|sed 's/.* //')
+export INT=ipogif0
+export NODECT=$( qstat  $PBS_JOBID -x|sed 's/.*<mppnodect>//'|sed 's/<.*//'|head -1)
+let NODECT=$NODECT
+
+export GET_ID="aprun -q -n $NODECT -N 1 cat /proc/cray_xt/nid"
+export RUN_DEEP="aprun -n $NODECT -N 1 -d $THREADS"
+export IDCOMMAND='ID="$(cat /proc/cray_xt/nid)"'
+
+export SW=/project/projectdirs/genomes/apps
+#export LD_LIBRARY_PATH=$SW/lib
+export JAVA_HOME=$SW/lib/jdk1.6.0_13/jre/
+
+export CRAY_ROOTFS=DSL
+
+export PATH=$PATH:$JAVA_HOME/bin
+
+export HADOOP_LINK=$SCRATCH2/hadoop/
+export HADOOP_OPTS="-Djava.security.egd=file:/dev/urandom"
+export HADOOP_IDENT_STRING=$USER
+
+function create_env {
+  printenv|grep -v '}'|grep -v '{'| sed 's/^/export /' |sed "s/=/='/" |sed "s/\$/'/" > $CONFIG/env
+}
