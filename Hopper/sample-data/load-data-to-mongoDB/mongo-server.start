@@ -1,0 +1,29 @@
+#!/bin/bash +vx
+
+echo "-------------- SERVER DATAPATH :  $1 ---------------"
+echo "-------------- STARTING SERVER -----------------"
+#hostname
+
+
+export MONGO_HOME=/global/homes/e/edede/Hopper/hadoop-moduled/mongodb-linux-x86_64-1.8.1
+export HADOOP_MONGO_DATA=/scratch/scratchdirs/edede/MyHadoop/hadoop-mongo-data
+#/global/u2/e/edede/tryme/mongo/mongodb-linux-x86_64-1.8.1
+
+#repair
+#rm $MONGO_HOME/mongo-data/mongod.lock
+#$MONGO_HOME/bin/mongod --repair --dbpath $MONGO_HOME/mongo-data/$1
+
+
+#~/tryme/mongo/mongodb-linux-x86_64-1.8.1/bin/mongod --dbpath $SCRATCH/bar --noprealloc --maxConns 1000 --oplogSize 1000
+
+rm -r $HADOOP_MONGO_DATA/$1
+mkdir $HADOOP_MONGO_DATA/$1  
+
+
+#ulimit -a
+$MONGO_HOME/bin/mongod --dbpath $HADOOP_MONGO_DATA/$1 &
+#--noprealloc --maxConns 3000 --oplogSize 500
+
+
+#--noprealloc --dbpath /tmp/mongodata$1
+
